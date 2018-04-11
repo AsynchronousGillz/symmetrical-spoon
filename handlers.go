@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -13,7 +12,12 @@ import (
 
 // Index the root
 func Index(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Welcome!\n")
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	a := applicationJSON{Version: Version, Build: Build, Code: http.StatusOK, Text: "Welcome!"}
+	if err := json.NewEncoder(w).Encode(a); err != nil {
+		panic(err)
+	}
 }
 
 // TransactionIndex index

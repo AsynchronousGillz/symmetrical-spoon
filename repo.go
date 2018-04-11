@@ -8,8 +8,8 @@ var transactions []Transaction
 
 // Give us some seed data
 func init() {
-	RepoCreateTransaction(Transaction{Name: "Write presentation"})
-	RepoCreateTransaction(Transaction{Name: "Host meetup"})
+	t := Transaction{Name: "AWS", Date: "2018-01-01", Info: "VISA", Amount: 0.0, Account: "checking"}
+	RepoCreateTransaction(t)
 }
 
 // RepoFindTransaction find a transaction
