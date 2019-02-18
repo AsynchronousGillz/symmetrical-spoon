@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <title>{{.Title}}</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="icon" type="image/png" href="{{.Baseurl}}/assets/logo.png">
+  <link href='//fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="{{.Baseurl}}/assets/bootstrap.min.css">
+  <link href="{{.Baseurl}}/assets/styles.css" rel="stylesheet" type="text/css" media="all">
+</head>
+<div id="home">
+	<header>
+		<div id="header-top">
+			<div class="sheet">
+				<nav></nav>
+				<a class="logo" target="_blank" href="/"></a>
+			</div>
+		</div>
+		<div id="header-alert">
+			<div class="sheet"></div>
+		</div>
+		<div id="header-message">
+			<div class="sheet">
+			</div>
+		</div>
+		<div class="sticky" id="header-bottom">
+			<div class="sheet">
+				<div class="title">
+					<h1><a href="/">AsynchronousGillz</a></h1>
+				</div>
+			</div>
+		</div>
+		<div id="top-cover-image-wrapper">
+			<div id="top-cover-image-inner" data-anchor-target="#skrollr > main" data-0="top:-10%" data-top-top="top:0%" class="skrollable skrollable-between" style="top: -10%;"></div>
+		</div>
+	</header>
+</div>
+<div>
+<h3 id="spacetime"></h3>
+<form name="searchForm" class="searchForm" method="GET"  action="javascript:searchForm()">
+	<p>
+		<i id="list-search" class="fa fa-question-circle"></i>
+		<input class="searchInput" type="text" name="q" placeholder="Welcome" autofocus>
+	</p>
+</form>
+<ul id="searchEngineList" class="hide"></ul>
+<script type="text/javascript" src="{{.Baseurl}}/assets/site.js" async></script>
+</div>
+<div>
+
+</div>
+<footer>
+	<div id="footer-bottom">
+		<div class="sheet">
+			<div id="copyright">&copy; {{.time}}</div>
+		</div>
+	</div>
+</footer>
+
+</div>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="{{.Baseurl}}/assets/bootstrap.min.js"></script>
+</html>
