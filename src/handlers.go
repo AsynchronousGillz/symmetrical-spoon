@@ -6,24 +6,22 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
-	"html/template"
 	"github.com/gorilla/mux"
 )
 
+// Website
 type WebSite struct {
-	string
-	
+	Title   string `json:"title"`
+	BaseUrl string `json:"base_url"`
+	Time    string `json:"time"`
 }
 
 // Index the root
 func Index(w http.ResponseWriter, r *http.Request) {
-	if err := templates.ExecuteTemplate(w, "template.html", welcome); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
 }
 
-// Index the root
-func Version(w http.ResponseWriter, r *http.Request) {
+// Application status
+func ApplicationStatus(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	a := generateApplicationJSON()
@@ -32,11 +30,21 @@ func Version(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// TransactionIndex index
-func TransactionIndex(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	templates := template.Must(template.ParseFiles("templates/welcome-template.html"))
-	if err := json.NewEncoder(w).Encode(transactions); err != nil {
+// TransactionList shows a list of transactions
+func TransactionShow(w http.ResponseWriter, r *http.Request) {
+	var err error
+	if transaction.ID > 0 {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
+		if err := json.NewEncoder(w).Encode(transaction); err != nil {
+			panic(err)
+		}
+		return
+	}
+	// If we didn't find it, 404
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusNotFound)
+	if err := json.NewEncoder(w).Encode(jsonErr{Code: http.StatusNotFound, Text: "Not Found"}); err != nil {
 		panic(err)
 	}
 }
@@ -65,7 +73,6 @@ func TransactionShow(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(jsonErr{Code: http.StatusNotFound, Text: "Not Found"}); err != nil {
 		panic(err)
 	}
-
 }
 
 // TransactionCreate create a transaction
@@ -86,7 +93,6 @@ func TransactionCreate(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 	}
-
 	t := RepoCreateTransaction(transaction)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)

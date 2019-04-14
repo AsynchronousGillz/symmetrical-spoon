@@ -11,19 +11,19 @@ var transactions []Transaction
 
 // Give us some seed data
 func init() {
-	t := Transaction{Name: "AWS", Date: "2018-01-01", Info: "VISA", Amount: 0.0, Account: "checking"}
+	t := Transaction{Name: "symmetrical-spoon", Date: "2018-01-01", Info: "VISA", Amount: 0.0, Account: "checking"}
 	RepoCreateTransaction(t)
 }
 
 // RepoFindTransaction find a transaction
-func RepoFindTransaction(id int) Transaction {
+func RepoFindTransaction(id int) Transaction, error {
 	for _, t := range transactions {
 		if t.ID == id {
-			return t
+			return t, nil
 		}
 	}
 	// return empty Transaction if not found
-	return Transaction{}
+	return nil, errors.New("")
 }
 
 // RepoCreateTransaction this is bad, I don't think it passes race condtions

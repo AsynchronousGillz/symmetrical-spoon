@@ -21,10 +21,16 @@ var routes = Routes{
 		Index,
 	},
 	Route{
+		"ApplicationStatus",
+		"GET",
+		"/status",
+		ApplicationStatus,
+	},
+	Route{
 		"TransactionIndex",
 		"GET",
-		"/transaction",
-		TransactionIndex,
+		"/transactions",
+		TransactionList,
 	},
 	Route{
 		"TransactionCreate",
