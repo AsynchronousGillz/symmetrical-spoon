@@ -2,26 +2,17 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
-	"strconv"
 	"github.com/gorilla/mux"
 )
 
-// Website
-type WebSite struct {
-	Title   string `json:"title"`
-	BaseUrl string `json:"base_url"`
-	Time    string `json:"time"`
-}
+// https://golang.org/src/net/http/status.go
 
 // Index the root
 func Index(w http.ResponseWriter, r *http.Request) {
-}
-
-// Application status
-func ApplicationStatus(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	a := generateApplicationJSON()
@@ -30,47 +21,56 @@ func ApplicationStatus(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Application status
+func ApplicationStatus(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	a := applicationStatusJSON{"OK"}
+	if err := json.NewEncoder(w).Encode(a); err != nil {
+		panic(err)
+	}
+}
+
 // TransactionList shows a list of transactions
-func TransactionShow(w http.ResponseWriter, r *http.Request) {
-	var err error
-	if transaction.ID > 0 {
+// curl http://localhost:8080/transactions
+func TransactionList(w http.ResponseWriter, r *http.Request) {
+	transactions, err := Transactions()
+	if err != nil {
+		// We didn't find it, 404
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusOK)
-		if err := json.NewEncoder(w).Encode(transaction); err != nil {
+		w.WriteHeader(http.StatusInternalServerError) // Internal Server Error
+		textErr := fmt.Sprintf("error: %s", err)
+		if err := json.NewEncoder(w).Encode(jsonErr{Code: http.StatusInternalServerError, Text: textErr}); err != nil {
 			panic(err)
 		}
 		return
 	}
-	// If we didn't find it, 404
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusNotFound)
-	if err := json.NewEncoder(w).Encode(jsonErr{Code: http.StatusNotFound, Text: "Not Found"}); err != nil {
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(transactions); err != nil {
 		panic(err)
 	}
 }
 
 // TransactionShow show a transaction
+// curl http://localhost:8080/transaction/uuid
 func TransactionShow(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	var transactionID int
-	var err error
-	if transactionID, err = strconv.Atoi(vars["transactionID"]); err != nil {
-		panic(err)
-	}
-	transaction := RepoFindTransaction(transactionID)
-	if transaction.ID > 0 {
+	var transactionID string = vars["transactionID"]
+	transaction, err := FindTransaction(transactionID)
+	if err != nil {
+		// We didn't find it, 404
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusOK)
-		if err := json.NewEncoder(w).Encode(transaction); err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		textErr := fmt.Sprintf("id %s not found", transactionID)
+		if err := json.NewEncoder(w).Encode(jsonErr{Code: http.StatusNotFound, Text: textErr}); err != nil {
 			panic(err)
 		}
 		return
 	}
-
-	// If we didn't find it, 404
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusNotFound)
-	if err := json.NewEncoder(w).Encode(jsonErr{Code: http.StatusNotFound, Text: "Not Found"}); err != nil {
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(transaction); err != nil {
 		panic(err)
 	}
 }
@@ -88,15 +88,44 @@ func TransactionCreate(w http.ResponseWriter, r *http.Request) {
 	}
 	if err := json.Unmarshal(body, &transaction); err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(422) // unprocessable entity
-		if err := json.NewEncoder(w).Encode(err); err != nil {
+		w.WriteHeader(http.StatusUnprocessableEntity) // unprocessable entity
+		textErr := fmt.Sprintf("error: %s", err)
+		if err := json.NewEncoder(w).Encode(jsonErr{Code: http.StatusUnprocessableEntity, Text: textErr}); err != nil {
 			panic(err)
 		}
 	}
-	t := RepoCreateTransaction(transaction)
+	t, err := CreateTransaction(transaction)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusInternalServerError) // Internal Server Error
+		textErr := fmt.Sprintf("error: %s", err)
+		if err := json.NewEncoder(w).Encode(jsonErr{Code: http.StatusInternalServerError, Text: textErr}); err != nil {
+			panic(err)
+		}
+	}
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
 	if err := json.NewEncoder(w).Encode(t); err != nil {
 		panic(err)
 	}
+}
+
+// TransactionDelete delete a transaction
+// curl -X DELETE http://localhost:8080/transaction/uuid
+func TransactionDelete(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	var transactionID string = vars["transactionID"]
+	err := DeleteTransaction(transactionID)
+	if err != nil {
+		// We didn't find it, 404
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusNotFound)
+		textErr := fmt.Sprintf("id %s not found", transactionID)
+		if err := json.NewEncoder(w).Encode(jsonErr{Code: http.StatusNotFound, Text: textErr}); err != nil {
+			panic(err)
+		}
+		return
+	}
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
 }

@@ -15,3 +15,7 @@ func generateApplicationJSON() applicationJSON {
 		os.Getenv("BUILD"),
 	}
 }
+
+type applicationStatusJSON struct {
+	Status string `json:"status"`
+}

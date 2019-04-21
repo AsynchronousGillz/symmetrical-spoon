@@ -41,7 +41,13 @@ var routes = Routes{
 	Route{
 		"TransactionShow",
 		"GET",
-		"/transaction/{transactionId}",
+		"/transaction/{transactionID}",
 		TransactionShow,
+	},
+	Route{
+		"TransactionDelete",
+		"DELETE",
+		"/transaction/{transactionID}",
+		TransactionDelete,
 	},
 }
