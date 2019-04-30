@@ -57,7 +57,7 @@ func TransactionList(w http.ResponseWriter, r *http.Request) {
 func TransactionShow(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	var transactionID string = vars["transactionID"]
-	transaction, err := FindTransaction(transactionID)
+	transaction, err := findTransaction(transactionID)
 	if err != nil {
 		// We didn't find it, 404
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
