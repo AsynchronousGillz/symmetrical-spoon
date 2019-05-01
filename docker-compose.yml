@@ -2,10 +2,8 @@ version: '2'
 
 services:
   symmetrical-spoon:
-    image: 'symmetrical-spoon:latest'
+    image: 'symmetrical-spoon:${VERSION}.${BUILD}'
     volumes:
       - './src:/app/'
     ports:
       - '8080:8080'
-    env_file:
-      - symmetrical-spoon.env
