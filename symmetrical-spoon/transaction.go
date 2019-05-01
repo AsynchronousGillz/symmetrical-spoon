@@ -24,7 +24,7 @@ type Transaction struct {
 // Give us some seed data
 func init() {
 	databaseName := os.Getenv("DATABASE")
-	os.Create(databaseName)
+	os.Create(fmt.Sprintf("./%s", databaseName))
 	db, err := sql.Open("sqlite3", databaseName)
 	if err != nil {
 		fmt.Println(err)
