@@ -23,7 +23,7 @@ type Transaction struct {
 
 // Give us some seed data
 func init() {
-	databaseName := os.Getenv("database_name")
+	databaseName := os.Getenv("DATABASE")
 	os.Create(databaseName)
 	db, err := sql.Open("sqlite3", databaseName)
 	if err != nil {
@@ -121,7 +121,7 @@ func CreateTransaction(t Transaction) (Transaction, error) {
 		return t, fmt.Errorf("failed to begin database to insert identifier: [%s] %s", t.Identifier, err)
 	}
 	defer tx.Rollback()
-	sqlStmt, err := tx.Prepare("INSERT INTO trasactions VALUES(:Identifier, :Name, :Date, :Info, :Amount, :Account, :createDate)")
+	sqlStmt, err := tx.Prepare("INSERT INTO transactions VALUES(:Identifier, :Name, :Date, :Info, :Amount, :Account, :createDate)")
 	if err != nil {
 		return t, fmt.Errorf("Failed to prepare name database insert statement: %s", err)
 	}
@@ -136,7 +136,7 @@ func CreateTransaction(t Transaction) (Transaction, error) {
 	return t, nil
 }
 
-// DeleteTransaction remove a trasaction
+// DeleteTransaction remove a transaction
 func DeleteTransaction(identifier string) error {
 	db, err := sql.Open("sqlite3", os.Getenv("database_name"))
 	if err != nil {
