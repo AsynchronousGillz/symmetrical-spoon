@@ -4,5 +4,7 @@ Used to tack finance transactions
 
 + Build project
 ```
-make -C src/
+$ docker build -t symmetrical-spoon:${VERSION}.${BUILD} .
+$ docker-compose up -d
+$ docker-compose logs -f
 ```
