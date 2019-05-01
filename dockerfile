@@ -1,9 +1,9 @@
 FROM golang:latest
-RUN mkdir /app
-ADD ./src /app/
-WORKDIR /app
+RUN mkdir /symmetrical-spoon
+ADD ./symmetrical-spoon /symmetrical-spoon/
+WORKDIR /symmetrical-spoon
 RUN go get "github.com/gorilla/mux"
 RUN go get "github.com/mattn/go-sqlite3"
 RUN go get "github.com/google/uuid"
-RUN go build -o main .
-CMD ["/app/main"]
+RUN go build -o /symmetrical-spoon/main .
+CMD ["/symmetrical-spoon/main"]
